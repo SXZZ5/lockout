@@ -23,7 +23,7 @@ public class User {
         try {
             Dbops.getUser(this);
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -33,7 +33,7 @@ public class User {
             this.dbuser = Dbops.getUser(this);
             Glogger.log(dbuser.toString());
             // returns true or false depending on whether password is correct or not.
-            if (AppUtils.verifyPassword(this.password, dbuser.getPassword())){
+            if (AppUtils.verifyPassword(this.password, dbuser.getPassword())) {
                 Dbops.updateUserSession(this, sessiontoken);
                 return true;
             } else {
@@ -45,10 +45,14 @@ public class User {
         }
     }
 
-    public void concealDbuser(){
+    public void concealDbuser() {
         for (Info item : dbuser.getUserdata()) {
-            if(!AppUtils.hasTimeElapsedHours(item.getEpochTime(), item.getCooldownHours()))
-                item.setPwdhash(null);
+            if (!AppUtils.hasTimeElapsedHours(item.getEpochTime(), item.getCooldownHours())) {
+                Instant minviewtime = Instant.ofEpochMilli(item.getEpochTime());
+                minviewtime = minviewtime.plusSeconds(item.getCooldownHours()*60*60);
+                Long tmp = minviewtime.toEpochMilli();
+                item.setPwdhash(tmp.toString());
+            }
         }
     }
 
@@ -67,9 +71,9 @@ public class User {
         }
     }
 
-    public void createInfo (String description, String zkpwdhash) throws Exception {
+    public void createInfo(String description, String zkpwdhash) throws Exception {
         for (Info item : dbuser.getUserdata()) {
-            if(item.getDescription().equals(description)) {
+            if (item.getDescription().equals(description)) {
                 throw new RuntimeException("Provided descriptor already exists");
             }
         }
@@ -87,13 +91,13 @@ public class User {
     public void deleteInfo(String description) throws Exception {
         List<Info> l = dbuser.getUserdata();
         int idxtodelete = -1;
-        for(int i = 0; i < l.size(); ++i){
+        for (int i = 0; i < l.size(); ++i) {
             Info item = l.get(i);
-            if(item.getDescription().equals(description)){
+            if (item.getDescription().equals(description)) {
                 idxtodelete = i;
             }
         }
-        if(idxtodelete == -1) {
+        if (idxtodelete == -1) {
             throw new RuntimeException("Provided descriptor does not exist");
         } else {
             l.remove(idxtodelete);
@@ -103,9 +107,10 @@ public class User {
 
     public void updateInfo(String description) throws Exception {
         List<Info> l = dbuser.getUserdata();
-        for (Info item : l ) if (item.getDescription().equals(description)){
-            item.setEpochTime(Instant.now().toEpochMilli());
-        }
+        for (Info item : l)
+            if (item.getDescription().equals(description)) {
+                item.setEpochTime(Instant.now().toEpochMilli());
+            }
         Dbops.updateUserInfo(this);
     }
 
@@ -153,7 +158,7 @@ public class User {
     public void setSessiontoken(String sessiontoken) {
         this.sessiontoken = sessiontoken;
     }
-    
+
 
     public Data getDbuser() {
         return dbuser;
@@ -162,6 +167,6 @@ public class User {
     public void setDbuser(Data dbuser) {
         this.dbuser = dbuser;
     }
-    
+
     /* generate code ends */
 }
