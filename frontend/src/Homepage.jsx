@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import PwdCharacter from "./pwdobfsct";
 import AddSecret from "./pwdobfsct";
+
 export default function Homepage() {
     const [info, setInfo] = useState([]);
 
