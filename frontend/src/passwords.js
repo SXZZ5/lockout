@@ -9,11 +9,13 @@ function genBalSeq(fixedlen, maxallowedlen) {
     console.assert(fixedlen % 2 == 0)
     let sum = 0, rounds = 0;
     let str = "";
-    while (rounds <= 10) {
+    while (rounds <= fixedlen) {
+        console.assert(sum === 0);
+        console.assert(rounds === 0)
         const val = random.boolean()
         if (val) {
-            if (sum == (fixedlen - rounds)) break;
-            if (sum == maxallowedlen) {
+            if (sum === (fixedlen - rounds)) break;
+            if (sum === maxallowedlen) {
                 str += "-";
                 sum -= 1;
             } else {
@@ -22,7 +24,7 @@ function genBalSeq(fixedlen, maxallowedlen) {
             }
         }
         else {
-            if (sum == 0) continue;
+            if (sum === 0) continue;
             str += "-";
             sum -= 1;
         }
