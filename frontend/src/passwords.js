@@ -30,7 +30,7 @@ function genBalSeq(fixedlen, maxallowedlen) {
             sum -= 1;
         }
         rounds++;
-    }
+    }2
     console.log("genBalSeq: after while loop", str)
 
     for (let i = 1; i <= (fixedlen - rounds); ++i) {
