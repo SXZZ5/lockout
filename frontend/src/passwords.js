@@ -7,11 +7,12 @@ function generatePin(pinlen = 4) {
 
 function genBalSeq(fixedlen, maxallowedlen) {
     console.assert(fixedlen % 2 == 0)
-    let sum = 0, rounds = 0;
+    let sum = 0, rounds = 1;
     let str = "";
     while (rounds <= fixedlen) {
-        console.assert(sum === 0);
-        console.assert(rounds === 0)
+        if (rounds === 1) {
+            console.assert(sum === 0);
+        }
         const val = random.boolean()
         if (val) {
             if (sum === (fixedlen - rounds)) break;
