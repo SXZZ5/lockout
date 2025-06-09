@@ -5,7 +5,7 @@ function generatePin(pinlen = 4) {
     return random.int(minlim, maxlim)
 }
 
-function genBalSeq(fixedlen, pinlen) {
+function genBalSeq(fixedlen, maxallowedlen) {
     console.assert(fixedlen % 2 == 0)
     let sum = 0, rounds = 0;
     let str = "";
@@ -13,7 +13,7 @@ function genBalSeq(fixedlen, pinlen) {
         const val = random.boolean()
         if (val) {
             if (sum == (fixedlen - rounds)) break;
-            if (sum == pinlen) {
+            if (sum == maxallowedlen) {
                 str += "-";
                 sum -= 1;
             } else {

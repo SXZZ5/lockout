@@ -60,7 +60,7 @@ export function PwdObfuscated() {
     // console.log(pwd);
     let fullseq = "";
     for (let i = 1; i <= digcount; ++i) {
-        let str = genBalSeq(10,digcount);
+        let str = genBalSeq(10,digcount-i-1);
         console.log(str)
         let old = null;
         for (let j = 1; j <= str.length; ++j) if(str[j-1] == '-') {
