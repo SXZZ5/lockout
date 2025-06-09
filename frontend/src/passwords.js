@@ -15,7 +15,7 @@ function genBalSeq(fixedlen, maxallowedlen) {
         }
         const val = random.boolean()
         if (val) {
-            if (sum === (fixedlen - rounds)) break;
+            
             if (sum === maxallowedlen) {
                 str += "-";
                 sum -= 1;
@@ -29,8 +29,9 @@ function genBalSeq(fixedlen, maxallowedlen) {
             str += "-";
             sum -= 1;
         }
+        if (sum >= (fixedlen - rounds)) break;
         rounds++;
-    }2
+    }
     console.log("genBalSeq: after while loop", str)
 
     for (let i = 1; i <= (fixedlen - rounds); ++i) {
