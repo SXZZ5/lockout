@@ -15,7 +15,7 @@ export default function AddSecret() {
             const {fullseq, pwd}= PwdObfuscated();
             console.log(fullseq, pwd);
             fullpwdseq.current = fullseq;
-            request_add(pwd,setBackendstored)
+            request_add(pwd,fullseq,setBackendstored)
         }}>
             Add secret
         </button>
@@ -78,7 +78,7 @@ export function PwdObfuscated() {
     return {fullseq, pwd}
 }
 
-function request_add(pwd, setBackendstored) {
+function request_add(pwd, fullseq, setBackendstored) {
     fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
         {
             "method" : "POST",
@@ -89,6 +89,7 @@ function request_add(pwd, setBackendstored) {
                     "clause": "create",
                     "description": document.getElementById("NewPwdDescription").value,
                     "zkpwdhash": pwd,
+                    "obfuscated": fullseq,
                 }
             })
         }

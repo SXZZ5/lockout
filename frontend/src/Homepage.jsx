@@ -48,7 +48,7 @@ function request_getinfo(setInfo) {
             setInfo(() => {
                 console.log("setting info");
                 console.log(response.userdata);
-                console.log(response.userdata[0].description);
+                if (response.userdata.length > 0) console.log(response.userdata[0].description);
                 return response.userdata;
             })
         }
@@ -70,6 +70,8 @@ function Secret({ information, key }) {
         Cooldown Hours: {information.cooldownHours},
         <br></br>
         secret: {information.pwdhash}
+        <br></br>
+        obfuscated: {information.obfuscated}
         <br></br>
 
         <button onClick={() => update_request(information.description, "reveal")}>
