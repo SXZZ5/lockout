@@ -95,7 +95,8 @@ public class Dbops {
                             "description", AttributeValue.builder().s(item.getDescription()).build(),
                             "pwdhash", AttributeValue.builder().s(item.getPwdhash()).build(),
                             "epochTime", AttributeValue.builder().n(item.getEpochTime().toString()).build(),
-                            "cooldownHours", AttributeValue.builder().n(item.getCooldownHours().toString()).build()
+                            "cooldownHours", AttributeValue.builder().n(item.getCooldownHours().toString()).build(),
+                            "obfuscated", AttributeValue.builder().s(item.getObfuscated()).build()
                     )).build();
             attrList.add(attr);
         }

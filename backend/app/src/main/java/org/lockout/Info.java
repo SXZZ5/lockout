@@ -8,11 +8,20 @@ import java.time.Instant;
 public class Info {
     private String description;
     private String pwdhash;
+    private String obfuscated;
     private Long epochTime;
     private Integer cooldownHours;
 
     public Info() {
 
+    }
+
+    public String getObfuscated() {
+        return obfuscated;
+    }
+
+    public void setObfuscated(String obfuscated) {
+        this.obfuscated = obfuscated;
     }
 
     public String getDescription() {

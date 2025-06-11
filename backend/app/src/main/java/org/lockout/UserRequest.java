@@ -11,6 +11,7 @@ class Action {
     String clause;
     String description;
     String zkpwdhash;
+    String obfuscated;
 
     public String getZkpwdhash() {
         return zkpwdhash;
@@ -30,6 +31,14 @@ class Action {
 
     public String getClause() {
         return clause;
+    }
+
+    public String getObfuscated() {
+        return obfuscated;
+    }
+
+    public void setObfuscated(String obfuscated) {
+        this.obfuscated = obfuscated;
     }
 
     public void setClause(String clause) {
@@ -287,7 +296,7 @@ class Updates extends UserRequest {
         try {
             switch (action.clause) {
                 case "create":
-                    user.createInfo(action.description, action.zkpwdhash);
+                    user.createInfo(action.description, action.zkpwdhash, action.obfuscated);
                     return RespondGood();
                 case "delete":
                     user.deleteInfo(action.description);

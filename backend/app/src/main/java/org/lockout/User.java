@@ -52,6 +52,7 @@ public class User {
                 minviewtime = minviewtime.plusSeconds(item.getCooldownHours()*60*60);
                 Long tmp = minviewtime.toEpochMilli();
                 item.setPwdhash(tmp.toString());
+                item.setObfuscated("Don't do this cutie");
             }
         }
     }
@@ -71,7 +72,7 @@ public class User {
         }
     }
 
-    public void createInfo(String description, String zkpwdhash) throws Exception {
+    public void createInfo(String description, String zkpwdhash, String obfuscated) throws Exception {
         for (Info item : dbuser.getUserdata()) {
             if (item.getDescription().equals(description)) {
                 throw new RuntimeException("Provided descriptor already exists");
@@ -83,6 +84,7 @@ public class User {
         newinfo.setPwdhash(zkpwdhash);
         newinfo.setEpochTime(Instant.now().toEpochMilli());
         newinfo.setCooldownHours(7);
+        newinfo.setObfuscated(obfuscated);
 
         dbuser.getUserdata().add(newinfo);
         Dbops.updateUserInfo(this);
