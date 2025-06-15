@@ -65,5 +65,4 @@ function clickLogin(setStatus) {
         console.log(textstring);
         setStatus(textstring);
     })
-
 }

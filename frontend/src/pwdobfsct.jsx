@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { genBalSeq, generatePin } from "./passwords";
+import { genBalSeq, generatePin, generatePwd } from "./passwords";
 import random from "random"
 export default function AddSecret() {
     const [showing, setShowing] = useState(false);
@@ -8,29 +8,42 @@ export default function AddSecret() {
     return <>
         <input type="text" placeholder="Enter descriptor" id="NewPwdDescription"></input>
         <button onClick={() => {
-            if(document.getElementById("NewPwdDescription").value == null) {
+            if (document.getElementById("NewPwdDescription").value == null) {
                 alert("enter a description first")
                 return
             }
-            const {fullseq, pwd}= PwdObfuscated();
+            const { fullseq, pwd } = PwdObfuscated();
             console.log(fullseq, pwd);
             fullpwdseq.current = fullseq;
-            request_add(pwd,fullseq,setBackendstored)
+            request_add(pwd, fullseq, setBackendstored)
         }}>
-            Add secret
+            Add Pin secret
+        </button>
+        <button onClick={() => {
+            if (document.getElementById("NewPwdDescription").value == null) {
+                alert("enter a description first")
+                return
+            }
+            const pwd = generatePwd();
+            const fullseq = pwd;
+            console.log(fullseq, pwd);
+            fullpwdseq.current = fullseq;
+            request_add(pwd, fullseq, setBackendstored)
+        }}>
+            Add Password secret
         </button>
         <br></br>
         <button onClick={() => setShowing((prev) => !prev)}>
             Start Entering (again ?)
         </button>
         <br></br>
-        {((showing == true) && (backendstored == true)) ? <PwdCharacter fullseq={fullpwdseq.current}/> : "not showing"}
+        {((showing == true) && (backendstored == true)) ? <PwdCharacter fullseq={fullpwdseq.current} /> : "not showing"}
     </>
 }
 
 // description -> click add button -> PwdObfuscate() + send_to_backend -> start showing -> render pwdcreate 
 
-export function PwdCharacter({fullseq}) {
+export function PwdCharacter({ fullseq }) {
     // const pwdseq = useRef("lund");
     const pwdseq = useRef(fullseq);
     console.log(pwdseq);
@@ -42,7 +55,7 @@ export function PwdCharacter({fullseq}) {
             setChar(() => ("Finished"))
         }
         console.log(index.current)
-        console.log(pwdseq.current.at(index.current-1))
+        console.log(pwdseq.current.at(index.current - 1))
         setChar((prev) => pwdseq.current.at(index.current - 1))
     }
     return <div id="PWDCHAR" style={{
@@ -60,10 +73,10 @@ export function PwdObfuscated() {
     // console.log(pwd);
     let fullseq = "";
     for (let i = 1; i <= digcount; ++i) {
-        let str = genBalSeq(10,digcount-i+1);
+        let str = genBalSeq(10, digcount - i + 1);
         console.log(str)
         let old = null;
-        for (let j = 1; j <= str.length; ++j) if(str[j-1] == '-') {
+        for (let j = 1; j <= str.length; ++j) if (str[j - 1] == '-') {
             fullseq += str[j - 1];
             old = null;
         } else {
@@ -75,13 +88,13 @@ export function PwdObfuscated() {
     }
     // console.log(fullseq)
     // console.log("line 41: " + fullseq);
-    return {fullseq, pwd}
+    return { fullseq, pwd }
 }
 
 function request_add(pwd, fullseq, setBackendstored) {
     fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
         {
-            "method" : "POST",
+            "method": "POST",
             credentials: "include",
             body: JSON.stringify({
                 "email": localStorage.getItem("email"),
@@ -94,7 +107,7 @@ function request_add(pwd, fullseq, setBackendstored) {
             })
         }
     ).then((response) => {
-        if(response.ok) {
+        if (response.ok) {
             setBackendstored(() => true)
             alert("Secret stored. You can start entering now")
         } else {
@@ -106,8 +119,8 @@ function request_add(pwd, fullseq, setBackendstored) {
 
 function genUnique(old) {
     let cur = old;
-    while(cur == old) {
-        cur = random.int(0,9)
+    while (cur == old) {
+        cur = random.int(0, 9)
     }
     return cur
 }

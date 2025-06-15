@@ -5,6 +5,14 @@ function generatePin(pinlen = 4) {
     return random.int(minlim, maxlim)
 }
 
+function generatePwd(pwdlen = 30){
+    var res = "";
+    for(let i=1; i<=pwdlen; ++i){
+        res += String.fromCharCode(random.int(97,122));
+    }
+    return res;
+}
+
 function genBalSeq(fixedlen, maxallowedlen) {
     console.assert(fixedlen % 2 == 0)
     let sum = 0, rounds = 1;
@@ -73,4 +81,4 @@ function genBalSeq(fixedlen, maxallowedlen) {
     }
 }
 
-export { generatePin, genBalSeq }
+export { generatePin, genBalSeq, generatePwd }
