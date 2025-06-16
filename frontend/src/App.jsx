@@ -1,13 +1,13 @@
-import { createSignal } from 'solid-js'
+import { Router, Route } from '@solidjs/router'
 import Landing from './pages/Landing'
 import Homepage from './pages/Homepage'
 
 function App() {
   return (
-    <>
-      <Landing></Landing>
-      <Homepage></Homepage>
-    </>
+    <Router>
+        <Route path="/" component={Landing}/>
+        <Route path="/home" component={Homepage}/>
+    </Router>
   )
 }
 

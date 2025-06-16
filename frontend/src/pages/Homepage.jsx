@@ -1,11 +1,13 @@
 import { createSignal, Index, Show } from "solid-js"
-import { secret_box } from "../styles.css";
+import { secret_box } from "../styles/Landing.css";
 import AddSecret from "./pwdobfsct";
 
 export default function Homepage() {
     const [info, setInfo] = createSignal([]);
+    const [requesting, setRequesting] = createSignal(true)
 
     return <div id="HOMEPAGE">
+
         <button onClick={async () => setInfo(await request_getinfo())}>
             Getinfo
         </button>
@@ -56,14 +58,14 @@ function Secret({ information, key }) {
         obfuscated: {information.obfuscated}
         <br></br>
 
-        <button onClick={() => update_request(information.description, "reveal")}>
+        <button onClick={() => request_update(information.description, "reveal")}>
             Register reveal request
         </button>
         <button onClick={() => {
             var response = prompt(`Do you really want to delete ${information.description} ? (Y/N)`)
             response = response.toLowerCase()
             if (response[0] == 'y')
-                update_request(information.description, "delete")
+                request_update(information.description, "delete")
             else
                 alert("delete request omitted.")
         }}>
@@ -72,7 +74,7 @@ function Secret({ information, key }) {
     </div>
 }
 
-function update_request(description, action_clause) {
+function request_update(description, action_clause) {
     fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates", {
         method: "POST",
         credentials: "include",
