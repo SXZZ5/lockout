@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js"
 import { bigtext, herostyle, landingstyle, smalltext } from "../styles/Landing.css"
 import { input_field, label, logsign, logsignbutton, logsign_disabled_button, newuserstyle, very_light_text, logsign_action_failure } from "../styles/Logsign.css"
+import { useNavigate } from "@solidjs/router"
 
 export default function Landing() {
     return (
@@ -28,6 +29,7 @@ function LogSign() {
     const [hasaccount, setHasaccount] = createSignal(true);
     const [pwdsmatch, setPwdsmatch] = createSignal(true)
     const [tried, setTried] = createSignal(false)
+    const navigate = useNavigate();
 
     return (
         <>
@@ -79,7 +81,9 @@ function LogSign() {
                         setTried(true)
                         try {
                             setStatus(await request_login())
+                            navigate("/home", {replace: true})
                         } catch (err) {
+                            console.log("Error logging in", err)
                             setStatus(400)
                         }
                     }}>

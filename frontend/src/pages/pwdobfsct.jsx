@@ -50,21 +50,21 @@ export default function AddSecret() {
 
 export function PwdCharacter() {
     const [index, setIndex] = createSignal(0)
-    const [char, setChar] = createSignal();
+    const [char, setChar] = createSignal('');
     function nextClick() {
         setIndex(index() + 1)
-        if (index() >= pwdseq.length) {
+        if (index() >= fullpwdseq().length) {
             setChar("Finished")
         }
         console.log(index())
-        console.log(pwdseq().at(index() - 1))
+        console.log(fullpwdseq().at(index() - 1))
         setChar(fullpwdseq().at(index() - 1))
     }
     return <div id="PWDCHAR" style={{
         "marginTop": "10px",
     }}>
         <Show when={char() != null} fallback={null}>
-            <h1>char()</h1>
+            <h1>{char()}</h1>
         </Show>
         <button onClick={nextClick}> Next</button>
     </div>

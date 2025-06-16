@@ -130,13 +130,14 @@ public class Dbops {
 
     public static void makeUser(User user, String sessiontoken) throws Exception {
         //set the user's session id here.
+        List<Info> tmp_empty = new ArrayList<>();
         logger.log("received user by Dbops.makeUser is: " + user.toString());
         Data newUser = new Data(
                 user.email,
                 AppUtils.hashpassword(user.password),
                 sessiontoken,
                 Instant.now().toEpochMilli(),
-                null
+                tmp_empty
         );
 
 

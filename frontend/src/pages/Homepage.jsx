@@ -1,18 +1,20 @@
-import { createSignal, Index, Show } from "solid-js"
+import { createSignal, Index, Show, createResource } from "solid-js"
 import { secret_box } from "../styles/Landing.css";
 import AddSecret from "./pwdobfsct";
 
+export const [refetchTrigger, setRefetchTrigger] = createSignal(0)
+
 export default function Homepage() {
-    const [info, setInfo] = createSignal([]);
-    const [requesting, setRequesting] = createSignal(true)
+    const [info] = createResource(refetchTrigger(), request_getinfo)
 
     return <div id="HOMEPAGE">
-
-        <button onClick={async () => setInfo(await request_getinfo())}>
+        <Show when={info.loading}>
+            Loading ...
+        </Show>
+        {/* <button onClick={async () => setInfo(await request_getinfo())}>
             Getinfo
-        </button>
-        <br></br>
-        <Show when={info().length > 0} fallback={<div>information will appear here</div>}>
+        </button> */}
+        <Show when={info.state == 'ready' && info().length > 0} fallback={<div>information will appear here</div>}>
             <Index each={info()} >
                 {(item, index) => {
                     console.log(item());
@@ -38,9 +40,8 @@ async function request_getinfo() {
         });
         const rbody = await response.json();
         return rbody.userdata;
-
     } catch (err) {
-        console.log("Something went wrong", err);
+        throw new Error("Couldn't get user info", err)
     }
   
 }
