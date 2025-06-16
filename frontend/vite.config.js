@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
+import solid from 'vite-plugin-solid'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+    plugins: [
+        solid(),
+        vanillaExtractPlugin({ identifiers: "debug" }),
+    ],
 })

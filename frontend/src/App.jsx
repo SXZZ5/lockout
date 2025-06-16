@@ -1,15 +1,14 @@
-import Homepage from "./Homepage"
-import Logsign from "./Logsign"
+import { createSignal } from 'solid-js'
+import Landing from './pages/Landing'
+import Homepage from './pages/Homepage'
 
 function App() {
-    const style = {
-        "display": "flex",
-        "justifyContent": "space-around"
-    }
-    return <div id="APP" style={style}>
-        <Logsign></Logsign>
-        <Homepage></Homepage>
-    </div>
+  return (
+    <>
+      <Landing></Landing>
+      <Homepage></Homepage>
+    </>
+  )
 }
 
 export default App

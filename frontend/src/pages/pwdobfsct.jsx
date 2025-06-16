@@ -1,21 +1,24 @@
-import { useState, useRef } from "react";
-import { genBalSeq, generatePin, generatePwd } from "./passwords";
+import { createSignal } from "solid-js";
+import { genBalSeq, generatePin, generatePwd } from "../passwords";
 import random from "random"
+
+const [fullpwdseq, setFullpwdseq] = createSignal(String());
+const [backendstored, setBackendstored] = createSignal(false);
+
 export default function AddSecret() {
-    const [showing, setShowing] = useState(false);
-    const [backendstored, setBackendstored] = useState(false);
-    const fullpwdseq = useRef(null);
+    const [showing, setShowing] = createSignal(false);
+
     return <>
         <input type="text" placeholder="Enter descriptor" id="NewPwdDescription"></input>
         <button onClick={() => {
             if (document.getElementById("NewPwdDescription").value == null) {
                 alert("enter a description first")
-                return
+                return;
             }
             const { fullseq, pwd } = PwdObfuscated();
             console.log(fullseq, pwd);
-            fullpwdseq.current = fullseq;
-            request_add(pwd, fullseq, setBackendstored)
+            setFullpwdseq(fullseq)
+            request_add(pwd, fullseq)
         }}>
             Add Pin secret
         </button>
@@ -28,40 +31,41 @@ export default function AddSecret() {
             const fullseq = pwd;
             console.log(fullseq, pwd);
             fullpwdseq.current = fullseq;
-            request_add(pwd, fullseq, setBackendstored)
+            request_add(pwd, fullseq)
         }}>
             Add Password secret
         </button>
         <br></br>
-        <button onClick={() => setShowing((prev) => !prev)}>
+        <button onClick={() => setShowing(!showing())}>
             Start Entering (again ?)
         </button>
         <br></br>
-        {((showing == true) && (backendstored == true)) ? <PwdCharacter fullseq={fullpwdseq.current} /> : "not showing"}
+        <Show when={showing() == true && backendstored() == true} fallback={"no showing"}>
+            <PwdCharacter/>
+        </Show>
     </>
 }
 
 // description -> click add button -> PwdObfuscate() + send_to_backend -> start showing -> render pwdcreate 
 
-export function PwdCharacter({ fullseq }) {
-    // const pwdseq = useRef("lund");
-    const pwdseq = useRef(fullseq);
-    console.log(pwdseq);
-    const index = useRef(0);
-    const [char, setChar] = useState();
+export function PwdCharacter() {
+    const [index, setIndex] = createSignal(0)
+    const [char, setChar] = createSignal();
     function nextClick() {
-        index.current = index.current + 1;
-        if (index.current >= pwdseq.length) {
-            setChar(() => ("Finished"))
+        setIndex(index() + 1)
+        if (index() >= pwdseq.length) {
+            setChar("Finished")
         }
-        console.log(index.current)
-        console.log(pwdseq.current.at(index.current - 1))
-        setChar((prev) => pwdseq.current.at(index.current - 1))
+        console.log(index())
+        console.log(pwdseq().at(index() - 1))
+        setChar(fullpwdseq().at(index() - 1))
     }
     return <div id="PWDCHAR" style={{
         "marginTop": "10px",
     }}>
-        {char ? <h1>{char}</h1> : null}
+        <Show when={char() != null} fallback={null}>
+            <h1>char()</h1>
+        </Show>
         <button onClick={nextClick}> Next</button>
     </div>
 }
@@ -91,7 +95,7 @@ export function PwdObfuscated() {
     return { fullseq, pwd }
 }
 
-function request_add(pwd, fullseq, setBackendstored) {
+function request_add(pwd, fullseq) {
     fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
         {
             "method": "POST",
@@ -108,13 +112,13 @@ function request_add(pwd, fullseq, setBackendstored) {
         }
     ).then((response) => {
         if (response.ok) {
-            setBackendstored(() => true)
+            setBackendstored(true)
             alert("Secret stored. You can start entering now")
         } else {
-            setBackendstored(() => false)
+            setBackendstored(false)
             alert("Could not store secret. Login and try again")
         }
-    }).catch(() => setBackendstored(() => false))
+    }).catch(() => setBackendstored(false))
 }
 
 function genUnique(old) {

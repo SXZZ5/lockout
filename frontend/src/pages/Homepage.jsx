@@ -1,68 +1,50 @@
-import { useEffect, useState } from "react";
+import { createSignal, Index, Show } from "solid-js"
+import { secret_box } from "../styles.css";
 import AddSecret from "./pwdobfsct";
 
 export default function Homepage() {
-    const [info, setInfo] = useState([]);
-
-    useEffect(() => {
-        console.log(info);
-    }, [info])
-
-    const listItems = () => {
-        return info.map((e) => {
-            return <Secret information={e} key={e.description} />
-        })
-    }
+    const [info, setInfo] = createSignal([]);
 
     return <div id="HOMEPAGE">
-        <button onClick={() => request_getinfo(setInfo)}>
+        <button onClick={async () => setInfo(await request_getinfo())}>
             Getinfo
         </button>
         <br></br>
-        {info ? listItems() : "information will appear here"}
+        <Show when={info().length > 0} fallback={<div>information will appear here</div>}>
+            <Index each={info()} >
+                {(item, index) => {
+                    console.log(item());
+                    return <Secret information={item()} />
+                }}
+            </Index>
+        </Show>
         <br></br>
         <AddSecret></AddSecret>
     </div>
 }
 
-function request_getinfo(setInfo) {
+async function request_getinfo() {
     console.log(localStorage.getItem("email"));
-    fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/getinfo", {
-        method: "POST",
-        body: JSON.stringify({
-            "email": localStorage.getItem("email"),
-        }),
-        credentials: "include",
-    }).then((response) => {
-        console.log(response.status)
-        console.log(response.ok);
-        if (response.ok) {
-            alert("Info retrieved succesfully")
-            return response.json();
-        } else {
-            alert("Could not retrieve info. Login and try again")
-        }
-    }).then((response) => {
-        if (response) {
-            console.log(response)
-            setInfo(() => {
-                console.log("setting info");
-                console.log(response.userdata);
-                if (response.userdata.length > 0) console.log(response.userdata[0].description);
-                return response.userdata;
-            })
-        }
-    })
+    try {
+        const response = await fetch(
+            "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/getinfo", {
+            method: "POST",
+            body: JSON.stringify({
+                "email": localStorage.getItem("email"),
+            }),
+            credentials: "include",
+        });
+        const rbody = await response.json();
+        return rbody.userdata;
+
+    } catch (err) {
+        console.log("Something went wrong", err);
+    }
+  
 }
 
 function Secret({ information, key }) {
-    return <div className="SECRETS" style={{
-        "border": "solid 1px thistle",
-        "borderRadius": "8px",
-        "margin": "10px",
-        "padding": "4px",
-        "boxShadow": "2px 4px 5px -1px rgba(0,0,0,0.9)"
-    }}>
+    return <div class={secret_box}>
         <h3>Description: {information.description}</h3>
         <br></br>
         Time: {(new Date(information.epochTime)).toString()},
