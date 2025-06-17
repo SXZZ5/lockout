@@ -32,7 +32,7 @@ export const input_field = style({
 })
 
 export const logsignbutton = style({
-    marginTop: '15px',
+    marginTop: '20px',
     marginBottom: '5px',
     height: '2em',
     backgroundColor: 'hsl(40,100%,80%)',

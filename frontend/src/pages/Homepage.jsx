@@ -1,19 +1,57 @@
-import { createSignal, Index, Show, createResource } from "solid-js"
+import { createSignal, Index, Show, createResource, Switch, createEffect } from "solid-js"
 import { secret_box } from "../styles/Landing.css";
 import AddSecret from "./pwdobfsct";
+import { homepage_container, tabstyle, bluesplash, pinksplash, tabstyle_active } from "../styles/Homepage.css";
+import { useNavigate } from "@solidjs/router";
 
 export const [refetchTrigger, setRefetchTrigger] = createSignal(0)
+const [activetab, setActivetab] = createSignal(0)
 
 export default function Homepage() {
-    const [info] = createResource(refetchTrigger(), request_getinfo)
+    return (
+        <div class={homepage_container}>
+            <div>
+                <div class={bluesplash}/>
+                <Show when={activetab() == 0}>
+                <div class={tabstyle_active} onClick={() => setActivetab(0)}>My Secrets</div>
+                <div class={tabstyle} onClick={() => setActivetab(1)}>Add Secrets</div>                    
+                </Show>
+                <Show when={activetab() == 1}>
+                <div class={tabstyle} onClick={() => setActivetab(0)}>My Secrets</div>
+                <div class={tabstyle_active} onClick={() => setActivetab(1)}>Add Secrets</div>                    
+                </Show>
+                
+            </div>
+            <div>
+                <Switch>
+                    <Match when={activetab() == 0}>
+                        <MySecrets />
+                    </Match>
+                    <Match when={activetab() == 1}>
+                        <AddSecret />
+                    </Match>
+                </Switch>
+            </div>
+        </div>
+    )
+}
 
-    return <div id="HOMEPAGE">
+function MySecrets() {
+    const [info] = createResource(refetchTrigger(), request_getinfo)
+    const navigate = useNavigate()
+    createEffect(() => {
+        if(info.error) {
+            navigate("/", {replace:true})
+        }
+    })
+    return <div id="MyPasswords">
         <Show when={info.loading}>
             Loading ...
         </Show>
         {/* <button onClick={async () => setInfo(await request_getinfo())}>
             Getinfo
         </button> */}
+        <div class={pinksplash}/>
         <Show when={info.state == 'ready' && info().length > 0} fallback={<div>information will appear here</div>}>
             <Index each={info()} >
                 {(item, index) => {
@@ -22,8 +60,6 @@ export default function Homepage() {
                 }}
             </Index>
         </Show>
-        <br></br>
-        <AddSecret></AddSecret>
     </div>
 }
 
@@ -43,7 +79,6 @@ async function request_getinfo() {
     } catch (err) {
         throw new Error("Couldn't get user info", err)
     }
-  
 }
 
 function Secret({ information, key }) {

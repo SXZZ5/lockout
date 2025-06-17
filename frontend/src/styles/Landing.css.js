@@ -17,7 +17,7 @@ export const landingstyle = style({
         top: '120px',
         left: '-15%',
         zIndex: '-10',
-        boxShadow: '1px 1px 1500px 200px hsla(210,100%,75%)',
+        boxShadow: '1px 1px 1500px 200px hsl(210,100%,75%)',
     },
 
     '.dot2': {
