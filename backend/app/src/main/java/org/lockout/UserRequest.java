@@ -293,6 +293,10 @@ class Updates extends UserRequest {
             return RespondBad();
         }
 
+        if(action.description.length() <= 0) {
+            return RespondBad();
+        }
+
         try {
             switch (action.clause) {
                 case "create":

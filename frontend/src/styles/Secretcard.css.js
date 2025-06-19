@@ -3,22 +3,15 @@ import '@fontsource-variable/frank-ruhl-libre';
 import '@fontsource-variable/nunito-sans';
 import '@fontsource-variable/roboto-slab';
 
-export const inputdescrstyle = style({
-    border: '2px solid hsl(0,0%,90%)',
-    borderRadius: '4px',
-    marginTop: '10px', marginBottom: '10px',
-    height: '1.5em',
-})
-
-export const genbuttons = style({
+export const buttonstyle = style({
     minHeight: '40px',
     minWidth: '80px',
     backgroundColor: 'hsl(40,100%,90%)',
     cursor: 'pointer',
     fontFamily: 'Roboto Slab Variable',
-    color: 'hsl(0,20%,30%)',
+    color: 'hsl(0,20%,50%)',
     fontSize: '16px',
-    fontWeight: '500',
+    fontWeight: '600',
     marginRight: '5px',
     marginBottom: '10px',
     marginTop: '10px',
@@ -35,22 +28,15 @@ export const genbuttons = style({
     },
 })
 
-export const container = style({
-    position: 'relative',
-    left: '-80%',
-})
 
-export const pwdchar = style({
-    marginTop: '10px',
-    fontFamily: 'Frank Ruhl Libre Variable',
-    fontSize: '40px',
-    fontWeight: '600',
-    color: 'hsl(0,0%,20%)'
-})
-
-export const indextellerstyle = style({
-    fontFamily: 'Roboto Slab Variable',
-    fontWeight: '500',
-    fontSize: '16px',
-    color: 'hsl(40,70%,40%)'
+export const secret_box = style({
+    borderRadius: '8px',
+    margin: '10px',
+    padding: '10px',
+    boxShadow: ['0px 0px 0px 1px rgba(0,0,0,0.16)',
+        '0px 1px 1px -0.5px rgba(0,0,0,0.16)',
+        '0px 3px 3px -1.5px rgba(0,0,0,0.16)',
+        '0px 6px 6px -3px rgba(0,0,0,0.16)',
+        '0px 12px 12px -6px rgba(0,0,0,0.16)',
+        '0px 24px 24px -12px rgba(0,0,0,0.16)'].join(', '),
 })

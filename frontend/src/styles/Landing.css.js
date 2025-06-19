@@ -62,11 +62,3 @@ export const smalltext = style({
     left: '-10%',
 })
 
-
-export const secret_box = style({
-    "border": "solid 1px thistle",
-    "borderRadius": "8px",
-    "margin": "10px",
-    "padding": "4px",
-    "boxShadow": "2px 4px 5px -1px rgba(0,0,0,0.9)"
-})

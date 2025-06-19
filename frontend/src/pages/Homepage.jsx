@@ -1,8 +1,9 @@
 import { createSignal, Index, Show, createResource, Switch, createEffect } from "solid-js"
-import { secret_box } from "../styles/Landing.css";
 import AddSecret from "./pwdobfsct";
 import { homepage_container, tabstyle, bluesplash, pinksplash, tabstyle_active } from "../styles/Homepage.css";
 import { useNavigate } from "@solidjs/router";
+import { buttonstyle, secret_box } from "../styles/Secretcard.css";
+import "../styles/spinner.css"
 
 export const [refetchTrigger, setRefetchTrigger] = createSignal(0)
 const [activetab, setActivetab] = createSignal(0)
@@ -11,16 +12,16 @@ export default function Homepage() {
     return (
         <div class={homepage_container}>
             <div>
-                <div class={bluesplash}/>
+                <div class={bluesplash} />
                 <Show when={activetab() == 0}>
-                <div class={tabstyle_active} onClick={() => setActivetab(0)}>My Secrets</div>
-                <div class={tabstyle} onClick={() => setActivetab(1)}>Add Secrets</div>                    
+                    <div class={tabstyle_active} onClick={() => setActivetab(0)}>My Secrets</div>
+                    <div class={tabstyle} onClick={() => setActivetab(1)}>Add Secrets</div>
                 </Show>
                 <Show when={activetab() == 1}>
-                <div class={tabstyle} onClick={() => setActivetab(0)}>My Secrets</div>
-                <div class={tabstyle_active} onClick={() => setActivetab(1)}>Add Secrets</div>                    
+                    <div class={tabstyle} onClick={() => setActivetab(0)}>My Secrets</div>
+                    <div class={tabstyle_active} onClick={() => setActivetab(1)}>Add Secrets</div>
                 </Show>
-                
+
             </div>
             <div>
                 <Switch>
@@ -40,19 +41,20 @@ function MySecrets() {
     const [info] = createResource(refetchTrigger(), request_getinfo)
     const navigate = useNavigate()
     createEffect(() => {
-        if(info.error) {
-            navigate("/", {replace:true})
+        if (info.error) {
+            alert("Session expired");
+            navigate("/", { replace: true })
         }
     })
     return <div id="MyPasswords">
         <Show when={info.loading}>
-            Loading ...
+            <div class='spinner'></div>
         </Show>
         {/* <button onClick={async () => setInfo(await request_getinfo())}>
             Getinfo
         </button> */}
-        <div class={pinksplash}/>
-        <Show when={info.state == 'ready' && info().length > 0} fallback={<div>information will appear here</div>}>
+        <div class={pinksplash} />
+        <Show when={info.state == 'ready' && info().length > 0}>
             <Index each={info()} >
                 {(item, index) => {
                     console.log(item());
@@ -82,25 +84,28 @@ async function request_getinfo() {
 }
 
 function Secret({ information, key }) {
+
     return <div class={secret_box}>
-        <h3>Description: {information.description}</h3>
+        <h3>{information.description}</h3>
         <br></br>
-        Time: {(new Date(information.epochTime)).toString()},
+        Last change on {(new Date(information.epochTime)).toString()}
         <br></br>
-        Cooldown Hours: {information.cooldownHours},
+        {information.cooldownHours} hours cooldown
         <br></br>
-        secret: {information.pwdhash}
+        Your secret is {information.pwdhash}
         <br></br>
-        obfuscated: {information.obfuscated}
+        Obfuscated version was {`{${information.obfuscated}}`}
         <br></br>
 
-        <button onClick={() => request_update(information.description, "reveal")}>
+        <button class={buttonstyle} onClick={() => request_update(information.description, "reveal")}>
             Register reveal request
         </button>
-        <button onClick={() => {
+        <button class={buttonstyle} onClick={(event) => {
             var response = prompt(`Do you really want to delete ${information.description} ? (Y/N)`)
             response = response.toLowerCase()
             if (response[0] == 'y')
+                var response = prompt(`Type "${information.description}" below to confirm.`)
+            if (response === information.description)
                 request_update(information.description, "delete")
             else
                 alert("delete request omitted.")

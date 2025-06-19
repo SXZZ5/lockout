@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
-import { PwdObfuscated, generatePwd } from "../passwords";
-import { container, genbuttons, inputdescrstyle, pwdchar } from "../styles/Addsecrets.css";
+import { pwdObfuscated, generatePwd } from "../passwords";
+import { container, genbuttons, indextellerstyle, inputdescrstyle, pwdchar } from "../styles/Addsecrets.css";
+import backspaceIcon from "../assets/icons8-backspace-50.png"
 
 const [fullpwdseq, setFullpwdseq] = createSignal(String());
 const [backendstored, setBackendstored] = createSignal(false);
@@ -17,7 +18,7 @@ export default function AddSecret() {
                     alert("enter a description first")
                     return;
                 }
-                const { fullseq, pwd } = PwdObfuscated();
+                const { fullseq, pwd } = pwdObfuscated();
                 console.log(fullseq, pwd);
                 setFullpwdseq(fullseq)
                 request_add(pwd, fullseq)
@@ -73,12 +74,18 @@ export function PwdCharacter() {
     }
     return <div class={pwdchar}>
         <Show when={char() != null} fallback={null}>
-            {char() === '-' ? "⌫" : char()}
+            <Show when={char() === '-'} fallback={char()}>
+                <img src={backspaceIcon} height={38} width={40}/>
+            </Show>
+            <br/>
         </Show>
         <br />
-        <button onClick={nextClick}>
-            {char() === "Finished" ? "Done" : "Next"}
-        </button>
+        <div>
+            <button class={genbuttons} onClick={nextClick}>
+                {char() === "Finished" ? "Done" : "Next"}
+            </button>
+            <span class={indextellerstyle}> {`${index()}/${fullpwdseq().length}`}</span>
+        </div>
     </div>
 }
 
