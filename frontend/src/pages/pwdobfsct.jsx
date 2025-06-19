@@ -1,47 +1,51 @@
 import { createSignal } from "solid-js";
-import { genBalSeq, generatePin, generatePwd } from "../passwords";
-import random from "random"
+import { PwdObfuscated, generatePwd } from "../passwords";
+import { container, genbuttons, inputdescrstyle, pwdchar } from "../styles/Addsecrets.css";
 
 const [fullpwdseq, setFullpwdseq] = createSignal(String());
 const [backendstored, setBackendstored] = createSignal(false);
+const [showing, setShowing] = createSignal(false);
 
 export default function AddSecret() {
-    const [showing, setShowing] = createSignal(false);
 
     return <>
-        <input type="text" placeholder="Enter descriptor" id="NewPwdDescription"></input>
-        <button onClick={() => {
-            if (document.getElementById("NewPwdDescription").value == null) {
-                alert("enter a description first")
-                return;
-            }
-            const { fullseq, pwd } = PwdObfuscated();
-            console.log(fullseq, pwd);
-            setFullpwdseq(fullseq)
-            request_add(pwd, fullseq)
-        }}>
-            Add Pin secret
-        </button>
-        <button onClick={() => {
-            if (document.getElementById("NewPwdDescription").value == null) {
-                alert("enter a description first")
-                return
-            }
-            const pwd = generatePwd();
-            const fullseq = pwd;
-            console.log(fullseq, pwd);
-            fullpwdseq.current = fullseq;
-            request_add(pwd, fullseq)
-        }}>
-            Add Password secret
-        </button>
-        <br></br>
-        <button onClick={() => setShowing(!showing())}>
-            Start Entering (again ?)
-        </button>
-        <br></br>
-        <Show when={showing() == true && backendstored() == true} fallback={"no showing"}>
-            <PwdCharacter/>
+        <div class={container}>
+            <input class={inputdescrstyle} type="text" placeholder="Enter descriptor" id="NewPwdDescription"></input>
+            <br />
+            <button class={genbuttons} onClick={() => {
+                if (document.getElementById("NewPwdDescription").value == null) {
+                    alert("enter a description first")
+                    return;
+                }
+                const { fullseq, pwd } = PwdObfuscated();
+                console.log(fullseq, pwd);
+                setFullpwdseq(fullseq)
+                request_add(pwd, fullseq)
+            }}>
+                Pin
+            </button>
+            <button class={genbuttons} onClick={() => {
+                if (document.getElementById("NewPwdDescription").value == null) {
+                    alert("enter a description first")
+                    return
+                }
+                const pwd = generatePwd();
+                const fullseq = pwd;
+                console.log(fullseq, pwd);
+                setFullpwdseq(fullseq)
+                request_add(pwd, fullseq)
+            }}>
+                Password
+            </button>
+            <br></br>
+            <button class={genbuttons} onClick={() => setShowing(!showing())}>
+                Start Entering
+            </button>
+            <br></br>
+        </div>
+
+        <Show when={showing() == true && backendstored() == true} fallback={null}>
+            <PwdCharacter />
         </Show>
     </>
 }
@@ -50,53 +54,36 @@ export default function AddSecret() {
 
 export function PwdCharacter() {
     const [index, setIndex] = createSignal(0)
-    const [char, setChar] = createSignal('');
+    const [char, setChar] = createSignal(String());
     function nextClick() {
         setIndex(index() + 1)
         if (index() >= fullpwdseq().length) {
-            setChar("Finished")
+            if (char() === "Finished") {
+                setChar(null);
+                setShowing(false);
+            } else {
+                setChar("Finished")
+            }
+            console.log(char())
+            return;
         }
         console.log(index())
         console.log(fullpwdseq().at(index() - 1))
         setChar(fullpwdseq().at(index() - 1))
     }
-    return <div id="PWDCHAR" style={{
-        "marginTop": "10px",
-    }}>
+    return <div class={pwdchar}>
         <Show when={char() != null} fallback={null}>
-            <h1>{char()}</h1>
+            {char() === '-' ? "⌫" : char()}
         </Show>
-        <button onClick={nextClick}> Next</button>
+        <br />
+        <button onClick={nextClick}>
+            {char() === "Finished" ? "Done" : "Next"}
+        </button>
     </div>
 }
 
-export function PwdObfuscated() {
-    let digcount = 4
-    let pwd = generatePin(digcount).toString()
-    console.log("EXECUTING")
-    // console.log(pwd);
-    let fullseq = "";
-    for (let i = 1; i <= digcount; ++i) {
-        let str = genBalSeq(10, digcount - i + 1);
-        console.log(str)
-        let old = null;
-        for (let j = 1; j <= str.length; ++j) if (str[j - 1] == '-') {
-            fullseq += str[j - 1];
-            old = null;
-        } else {
-            const tmpchar = genUnique(old).toString();
-            old = tmpchar;
-            fullseq += tmpchar;
-        }
-        fullseq += pwd[i - 1];
-    }
-    // console.log(fullseq)
-    // console.log("line 41: " + fullseq);
-    return { fullseq, pwd }
-}
-
-function request_add(pwd, fullseq) {
-    fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
+async function request_add(pwd, fullseq) {
+    const response = await fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
         {
             "method": "POST",
             credentials: "include",
@@ -110,21 +97,14 @@ function request_add(pwd, fullseq) {
                 }
             })
         }
-    ).then((response) => {
-        if (response.ok) {
-            setBackendstored(true)
-            alert("Secret stored. You can start entering now")
-        } else {
-            setBackendstored(false)
-            alert("Could not store secret. Login and try again")
-        }
-    }).catch(() => setBackendstored(false))
-}
-
-function genUnique(old) {
-    let cur = old;
-    while (cur == old) {
-        cur = random.int(0, 9)
+    )
+    
+    if(response.ok) {
+        alert("Secret stored. You can start entering now");
+        setBackendstored(true);
+        return;
+    } else {
+        setBackendstored(false);
+        alert("Could not store secret. Login and try again. This descriptor already exists")
     }
-    return cur
 }

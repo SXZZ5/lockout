@@ -22,7 +22,8 @@ export const tabstyle = style({
     fontFamily: 'Roboto Slab Variable',
     fontWeight: '700',
     fontSize: '20px',
-    color: 'hsl(240,50%,20%)'
+    color: 'hsl(240,50%,20%)',
+    cursor: 'pointer',
 })
 
 

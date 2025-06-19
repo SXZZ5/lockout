@@ -81,4 +81,38 @@ function genBalSeq(fixedlen, maxallowedlen) {
     }
 }
 
-export { generatePin, genBalSeq, generatePwd }
+function pwdObfuscated() {
+    let digcount = 4
+    let pwd = generatePin(digcount).toString()
+    console.log("EXECUTING")
+    // console.log(pwd);
+    let fullseq = "";
+    for (let i = 1; i <= digcount; ++i) {
+        let str = genBalSeq(10, digcount - i + 1);
+        console.log(str)
+        let old = null;
+        for (let j = 1; j <= str.length; ++j) if (str[j - 1] == '-') {
+            fullseq += str[j - 1];
+            old = null;
+        } else {
+            const tmpchar = genUnique(old).toString();
+            old = tmpchar;
+            fullseq += tmpchar;
+        }
+        fullseq += pwd[i - 1];
+    }
+    // console.log(fullseq)
+    // console.log("line 41: " + fullseq);
+    return { fullseq, pwd }
+}
+
+
+function genUnique(old) {
+    let cur = old;
+    while (cur == old) {
+        cur = random.int(0, 9)
+    }
+    return cur
+}
+
+export { generatePin, genBalSeq, generatePwd, pwdObfuscated as PwdObfuscated }
