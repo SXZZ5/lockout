@@ -58,7 +58,7 @@ export function PwdCharacter() {
     const [char, setChar] = createSignal(String());
     function nextClick() {
         setIndex(index() + 1)
-        if (index() >= fullpwdseq().length) {
+        if (index() > fullpwdseq().length) {
             if (char() === "Finished") {
                 setChar(null);
                 setShowing(false);
