@@ -2,6 +2,7 @@ import { createSignal } from "solid-js"
 import { bigtext, herostyle, landingstyle, smalltext } from "../styles/Landing.css"
 import { input_field, label, logsign, logsignbutton, logsign_disabled_button, newuserstyle, very_light_text, logsign_action_failure } from "../styles/Logsign.css"
 import { useNavigate } from "@solidjs/router"
+import "../styles/spinner.css"
 
 export default function Landing() {
     return (
@@ -25,17 +26,18 @@ function Hero() {
 }
 
 function LogSign() {
-    const [status, setStatus] = createSignal(200);
-    const [hasaccount, setHasaccount] = createSignal(true);
+    const [status, setStatus] = createSignal(200)
+    const [hasaccount, setHasaccount] = createSignal(true)
     const [pwdsmatch, setPwdsmatch] = createSignal(true)
     const [tried, setTried] = createSignal(false)
+    const [fetchActive, setFetchActive] = createSignal(false)
     const navigate = useNavigate();
 
     return (
         <>
             <div class={logsign_action_failure}>
                 <Show when={tried() == true && status() !== 200} fallback={null}>
-                    {hasaccount() ? "Incorrect credentials" : "User already exists"}
+                    {hasaccount() ? "Incorrect credentials" : "Failed to signup. User already exists"}
                 </Show>
             </div>
             <div id="LOGSIGN" class={logsign}>
@@ -79,12 +81,14 @@ function LogSign() {
                 <Show when={hasaccount() == true}>
                     <button class={logsignbutton} onClick={async () => {
                         setTried(true)
-                        try {
-                            setStatus(await request_login())
-                            navigate("/home", {replace: true})
-                        } catch (err) {
+                        setFetchActive(true)
+                        let status = await request_login();
+                        setFetchActive(false)
+                        setStatus(status)
+                        if (status == 200) {
+                            navigate("/home", { replace: true })
+                        } else {
                             console.log("Error logging in", err)
-                            setStatus(400)
                         }
                     }}>
                         Login
@@ -94,7 +98,13 @@ function LogSign() {
                     <Show when={pwdsmatch() == true}>
                         <button class={logsignbutton} onClick={async () => {
                             setTried(true)
-                            setStatus(await request_signup())
+                            setFetchActive(true)
+                            let status = await request_signup();
+                            setFetchActive(false)
+                            setStatus(status)
+                            if (status == 200) {
+                                navigate("/home", { replace: true })
+                            }
                         }}>
                             Signup
                         </button>
@@ -105,9 +115,11 @@ function LogSign() {
                             Signup
                         </button>
                     </Show>
-
                 </Show>
             </div>
+            <Show when={fetchActive() == true}>
+                <span class="spinnersmall" />
+            </Show>
         </>
     )
 }
@@ -117,23 +129,17 @@ async function request_signup() {
     const email = document.getElementById("emailfield").value
     const password = document.getElementById("passwordfield").value
     const endpoint = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/signup"
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            })
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        credentials: 'include',
+        body: JSON.stringify({
+            email: email,
+            password: password,
         })
-        if (!response.ok) throw (response.statusText)
-        const rbody = await response.text()
-        if (response.ok)
-            localStorage.setItem("email", email)
-        return response.status
-    } catch (err) {
-        console.log("Something went wrong", err)
-    }
+    })
+    return response.status;
+
 }
 
 async function request_login() {
@@ -141,23 +147,19 @@ async function request_login() {
     const password = document.getElementById("passwordfield").value
 
     const endpoint = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/login"
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            })
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        credentials: 'include',
+        body: JSON.stringify({
+            email: email,
+            password: password,
         })
-        if (!response.ok) throw (response.statusText)
-        const rbody = await response.text()
-        if (response.ok)
-            localStorage.setItem("email", email)
-        return rbody
-    } catch (err) {
-        console.log("Something went wrong", err)
+    })
+    if (response.ok) {
+        localStorage.setItem("email", email)
     }
+    return response.status
 }
 
 function checkEqualPasswords() {

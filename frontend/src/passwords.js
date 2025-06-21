@@ -5,10 +5,14 @@ function generatePin(pinlen = 4) {
     return random.int(minlim, maxlim)
 }
 
+const symbols = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','@','_','$','%','#','!']
+
 function generatePwd(pwdlen = 30) {
     var res = "";
     for (let i = 1; i <= pwdlen; ++i) {
-        res += String.fromCharCode(random.int(97, 122));
+        let tmp = random.int(1,58)
+        res += symbols[tmp-1]
+        // res += String.fromCharCode(random.int(97, 122));
     }
     return res;
 }

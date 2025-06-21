@@ -17,3 +17,23 @@
       transform: rotate(360deg);
     }
   }
+  
+  .spinnersmall {
+    width: 40px;
+    height: 40px;
+    border: 10px solid #ccc;
+    border-top: 10px solid #3498db; /* Blue accent */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 50px auto; /* center it horizontally with some top margin */
+    z-index: 10;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
