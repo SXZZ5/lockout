@@ -4,12 +4,26 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 import java.util.Map;
 
+/**
+ * Class responsible for implementing routing stuff.
+ */
 public class Router {
-    Map<String,Object> response;
+    /**
+     * The response object that will hold the response returned by the
+     * "controller" for the route.
+     */
+    Map<String, Object> response;
     static LambdaLogger logger;
-
+    /**
+     * The {@link LambdaInput} object for the request that has to be routed.
+     */
     LambdaInput input;
-    
+
+    /**
+     * Main routing part with a switch statement.
+     * Instantiates the appropriate controller for whatever is the route in {@link LambdaInput} input.
+     * @throws Exception
+     */
     public void handleRoutes () throws Exception {
         var requestContext = input.getRequestContext();
         var path = requestContext.getHttp().path();

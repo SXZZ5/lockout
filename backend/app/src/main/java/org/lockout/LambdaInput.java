@@ -1,13 +1,24 @@
 package org.lockout;
 import java.util.Map;
 
+/**
+ * The blueprint into which I want to deserialise everything that I consider
+ * useful about the HTTP request coming to lambda.
+ * EVERYTHING ABOUT A HTTP REQUEST IS PLAIN TEXT. Didn't know that. JS and Python world had me
+ * thinking differently. Even the json payloads are actually string text. That is why the stringify is needed before
+ * sending stuff in js land.
+ */
 public class LambdaInput {
     //FOR SOME REASON, AWS LAMBDA CONVERTS THE ENTIRE BODY INTO A STRING.
     private String body;
     private Map<String, String> queryStringParameters;
     private RequestContext requestContext;
+    /**
+     * All headers are important. Especially any cookie and Authorisation headers.
+     * {@link UserRequest} later gets the cookies from this headers only.
+     */
     private Map<String,String> headers;
-    //well its a subjective decision, but I think Cookies belong the UserRequest object instead.
+    //well it is a subjective decision, but I think Cookies belong the UserRequest object instead.
     /*generate code starts*/
 
     public RequestContext getRequestContext() {
@@ -53,6 +64,11 @@ public class LambdaInput {
     }
 }
 
+/**
+ * Holds request timing, method (GET/POST/etc), path or route, and IP for the request source.
+ * Useful stuff ofcourse.
+ * Embedded in {@link LambdaInput} as a field.
+ */
 class RequestContext {
     record Http(String method, String path, String sourceIp){}
     private Http http;

@@ -3,10 +3,17 @@ package org.lockout;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
+/**
+ * Defines the schema for {@link Action} field api post requests for storing, updating, revealing etc of secrets.
+ * ACTION field is supposed to contain what the client wants to do.
+ * Used mainly in the {@link Updates} child of {@link UserRequest} only, since {@link Login} or {@link Signup} obviously
+ * don't need any {@link Action} as such.
+ */
 class Action {
     String clause;
     String description;
@@ -46,11 +53,23 @@ class Action {
     }
 }
 
+/**
+ * Final form of the incoming user request. First we deserialise incoming HTTP request to {@link LambdaInput} and finally to
+ * {@link UserRequest} to get all that ACTION ({@link Action} part and similar stuff properly deserialised from the {@link LambdaInput#getBody()}
+ * More of a conceptual intermediary than anything else. {@link Login}, {@link Signup}, {@link Getinfo} etc inherit fields from this
+ * class and implement their own methods or logic.
+ */
 abstract public class UserRequest {
+    /**
+     * The jackson object mapper that we will be using for deserialising the "body" of incoming request.
+     */
     static ObjectMapper objectMapper = new ObjectMapper();
     String email;
     String password;
     String sessiontoken; //cookie se nikalke bharunga, client isn't sending session in body.
+    /**
+     * Notice this is a map since ofcourse there can be multiple cookies for each request.
+     */
     Map<String, String> cookies;
     List<Info> info;
     Action action;
@@ -64,11 +83,22 @@ abstract public class UserRequest {
     }
 
     public UserRequest() {}
+
+    /**
+     * Further Deserialises the body of {@link LambdaInput} and also extracts cookies from the headers of {@link LambdaInput}
+     * @param input The first level of deserialisation from the incoming HTTP request.
+     * @throws Exception
+     */
     public UserRequest(LambdaInput input) throws Exception {
         setParsedBody(input); //cookies map automatically null reh jayega.
         setParsedCookies(input); //cookies map ke alawa kuch touch nhi karega.
     }
 
+    /**
+     * Parse the body of incoming request and deserialise into an object of type this = {@link UserRequest}
+     * @param input
+     * @throws Exception
+     */
     public final void setParsedBody(LambdaInput input) throws Exception {
         if (input.getBody() == null) {
             return;
@@ -82,6 +112,12 @@ abstract public class UserRequest {
         }
     }
 
+    /**
+     * Read cookie header which is a string of cookies separated by ;
+     * Does some parsing and splitting to separate into individual cookies.
+     * @param input Again the first level of deserialisation coming from the HTTP request.
+     * @throws Exception
+     */
     public final void setParsedCookies(LambdaInput input) throws Exception {
         if (input.getHeaders() == null) {
             return;
@@ -157,6 +193,11 @@ abstract public class UserRequest {
     }
 }
 
+/**
+ * Signup related methods here.
+ * Not much really, creates an instance of {@link User} somewhere and uses it to make basic calls.
+ * Prepares, response object that will be used for setting {@link Router#response} that is finally returned to {@link Handler#handleRequest}
+ */
 class Signup extends UserRequest {
     public Signup(LambdaInput input) throws Exception {
         super(input);
@@ -197,6 +238,11 @@ class Signup extends UserRequest {
     }
 }
 
+/**
+ * Login related methods here.
+ * Not much really, creates an instance of {@link User} somewhere and uses it to make basic calls.
+ * Prepares, response object that will be used for setting {@link Router#response} that is finally returned to {@link Handler#handleRequest}
+ */
 class Login extends UserRequest {
     public Login(LambdaInput input) throws Exception {
         super(input);
@@ -238,6 +284,11 @@ class Login extends UserRequest {
 }
 
 
+/**
+ * Getting User Info related methods here.
+ * Not much really, creates an instance of {@link User} somewhere and uses it to make basic calls.
+ * Prepares, response object that will be used for setting {@link Router#response} that is finally returned to {@link Handler#handleRequest}
+ */
 class Getinfo extends UserRequest {
     public Getinfo(LambdaInput input) throws Exception {
         super(input);
@@ -277,6 +328,12 @@ class Getinfo extends UserRequest {
     }
 }
 
+
+/**
+ * Updating User Info related methods here.
+ * Not much really, creates an instance of {@link User} somewhere and uses it to make basic calls.
+ * Prepares, response object that will be used for setting {@link Router#response} that is finally returned to {@link Handler#handleRequest}
+ */
 class Updates extends UserRequest {
     public Updates(LambdaInput input) throws Exception {
         super(input);

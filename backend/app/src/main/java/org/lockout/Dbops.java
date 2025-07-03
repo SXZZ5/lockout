@@ -24,13 +24,32 @@ import java.util.Map;
 
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 
+/**
+ * All database calls here.
+ * Some static parts also for connecting to the database, initialised at Lambda startup.
+ */
 public class Dbops {
+    /**
+     * The old dyanamoDB client.
+     * Still Required to create the enhanced client.
+     * Actually used for some parts, not everything can be done with the enhanced client
+     * (Or I did not manage to figure out how yet)
+     */
     static DynamoDbClient ddbclient;
+    /**
+     * The enhanced dynamoDb client, makes some parts easier.
+     */
     static DynamoDbEnhancedClient ddbeclient;
+    /**
+     * Reference to the actual DynamoDBTable for the application.
+     */
     static DynamoDbTable<Data> ddbt;
     static LambdaLogger logger;
 
     public static void InitDdbModel() {
+        //just to assert that this function is not running on every API request or every database call.
+        logger.log("Running InitDbModel");
+
         ddbclient = DynamoDbClient.builder().region(Region.AP_SOUTH_1).build();
         ddbeclient = DynamoDbEnhancedClient.builder().dynamoDbClient(ddbclient).build();
         ddbt = ddbeclient.table(
@@ -44,6 +63,10 @@ public class Dbops {
         //made ddb table model from the schema with the name "lockout_table"
     }
 
+    /**
+     * Creates DynamoDb table if it does not already exist.
+     * TODO: I should probably remove this function completely ? I suppose it is wasting time.
+     */
     public static void CreateActualTableIfNeeded() {
         try {
             ddbclient.describeTable(DescribeTableRequest.builder().tableName("lockout").build());
@@ -62,6 +85,15 @@ public class Dbops {
         }
     }
 
+    /**
+     * Just take the whole user out of the database at return.
+     * Authentication and stuff is not our responsibility here.
+     * Assuming most users are going to be authenticated, not a bad idea to extract the whole row
+     * at once, maybe I am mistaken.
+     * @param user The user to get with whatever email he/she claims he/she is.
+     * @return  The whole row of data corresponding to the user.
+     * @throws Exception
+     */
     public static Data getUser(User user) throws Exception {
         //get the user data and compare session ids here.
         var keyEqual = QueryConditional.keyEqualTo(
@@ -83,7 +115,16 @@ public class Dbops {
         }
     }
 
-
+    /**
+     * Modifies the user.
+     * Any validations/safety are not the responsibility here.
+     * Take the given {@link User}, and send the whole thing to DB. Full row replacement.
+     * @param user the user object to. Note that this object contains the "Data" field for the user.
+     *             (assuming they were correctly authenticated, otherwise it would be null but this call
+     *             will never be made for an unauthenticated user)
+     * @throws Exception if for some reason it turns out that the user we are trying to update does not
+     * even exist.
+     */
     public static void updateUserInfo(User user) throws Exception {
         logger.log("updateUserInfo user.dbuser: " + user.dbuser.toString());
         //prepare the list that will replace the old list.
@@ -112,6 +153,15 @@ public class Dbops {
         ddbclient.updateItem(updateItemRequest);
     }
 
+    /**
+     * Updates the session information (sessionToken and sessiontime)
+     * Called on every login basically.
+     * Independently takes the current time just at the time of making change in db while the session
+     * token is provided by the caller.
+     * @param user The user whose session has to be updated.
+     * @param sessionToken The random id generated for the cookie token.
+     * @throws Exception if the user somehow doesn't exist or something.
+     */
     public static void updateUserSession(User user, String sessionToken) throws Exception {
         Long curtime = Instant.now().toEpochMilli();
         String sessiontime = curtime.toString();
@@ -128,6 +178,15 @@ public class Dbops {
         ddbclient.updateItem(updateItemRequest);
     }
 
+    /**
+     * Create a new user in database.
+     * Be very careful, this function doesn't check if user already exists, the caller has to check
+     * that with the {@link #getUser(User)} method.
+     * In case of mishap, the entire user data will get emptied for this user.
+     * @param user
+     * @param sessiontoken
+     * @throws Exception
+     */
     public static void makeUser(User user, String sessiontoken) throws Exception {
         //set the user's session id here.
         List<Info> tmp_empty = new ArrayList<>();

@@ -8,6 +8,9 @@ package org.lockout;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
+/**
+ * Just a Global logger wrapping LambdaLogger class from AWS.
+ */
 public class Glogger {
     static LambdaLogger logger;
     public static void setLogger(LambdaLogger logger) {
