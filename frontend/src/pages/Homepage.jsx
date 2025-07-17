@@ -5,6 +5,9 @@ import { useNavigate } from "@solidjs/router";
 import { buttonstyle, secret_box } from "../styles/Secretcard.css";
 import "../styles/spinner.css"
 
+const BE_URL_1 = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws"
+const BE_URL_2 = "https://pp2thp4tbfzcjhrspqniyrzorq0vdbtb.lambda-url.ap-south-1.on.aws"
+
 export const [refetchTrigger, setRefetchTrigger] = createSignal(0)
 const [activetab, setActivetab] = createSignal(0)
 
@@ -38,7 +41,7 @@ export default function Homepage() {
 }
 
 function MySecrets() {
-    const [info] = createResource(refetchTrigger(), request_getinfo)
+    const [info] = createResource(refetchTrigger, request_getinfo)
     const navigate = useNavigate()
     createEffect(() => {
         if (info.error) {
@@ -69,7 +72,7 @@ async function request_getinfo() {
     console.log(localStorage.getItem("email"));
     try {
         const response = await fetch(
-            "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/getinfo", {
+            `${BE_URL_2}/getinfo`, {
             method: "POST",
             body: JSON.stringify({
                 "email": localStorage.getItem("email"),
@@ -104,7 +107,7 @@ function Secret({ information, key }) {
             var response = prompt(`Do you really want to delete ${information.description} ? (Y/N)`)
             response = response.toLowerCase()
             if (response[0] == 'y')
-                var response = prompt(`Type "${information.description}" below to confirm.`)
+                response = prompt(`Type "${information.description}" below to confirm.`)
             if (response === information.description)
                 request_update(information.description, "delete")
             else
@@ -116,7 +119,7 @@ function Secret({ information, key }) {
 }
 
 function request_update(description, action_clause) {
-    fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates", {
+    fetch(`${BE_URL_2}/updates`, {
         method: "POST",
         credentials: "include",
         body: JSON.stringify({
@@ -130,6 +133,7 @@ function request_update(description, action_clause) {
         if (response.ok) {
             alert(action_clause + " request successful");
             console.log(response.status);
+            setRefetchTrigger((prev) => prev + 1)
         }
     })
 }

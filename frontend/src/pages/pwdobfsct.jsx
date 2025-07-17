@@ -3,6 +3,11 @@ import { pwdObfuscated, generatePwd } from "../passwords";
 import { container, genbuttons, indextellerstyle, inputdescrstyle, pwdchar } from "../styles/Addsecrets.css";
 import backspaceIcon from "../assets/icons8-backspace-50.png"
 
+
+
+const BE_URL_1 = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws"
+const BE_URL_2 = "https://pp2thp4tbfzcjhrspqniyrzorq0vdbtb.lambda-url.ap-south-1.on.aws"
+
 const [fullpwdseq, setFullpwdseq] = createSignal(String());
 const [backendstored, setBackendstored] = createSignal(false);
 const [showing, setShowing] = createSignal(false);
@@ -96,7 +101,7 @@ export function PwdCharacter() {
 }
 
 async function request_add(pwd, fullseq) {
-    const response = await fetch("https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/updates",
+    const response = await fetch(`${BE_URL_2}/updates`,
         {
             "method": "POST",
             credentials: "include",

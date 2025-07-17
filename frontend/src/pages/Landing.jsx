@@ -4,6 +4,9 @@ import { input_field, label, logsign, logsignbutton, logsign_disabled_button, ne
 import { useNavigate } from "@solidjs/router"
 import "../styles/spinner.css"
 
+const BE_URL_1 = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws"
+const BE_URL_2 = "https://pp2thp4tbfzcjhrspqniyrzorq0vdbtb.lambda-url.ap-south-1.on.aws"
+
 export default function Landing() {
     return (
 
@@ -128,9 +131,8 @@ async function request_signup() {
     if (!checkEqualPasswords()) return
     const email = document.getElementById("emailfield").value
     const password = document.getElementById("passwordfield").value
-    const endpoint = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/signup"
 
-    const response = await fetch(endpoint, {
+    const response = await fetch(`${BE_URL_2}/signup`, {
         method: "POST",
         credentials: 'include',
         body: JSON.stringify({
@@ -146,9 +148,7 @@ async function request_login() {
     const email = document.getElementById("emailfield").value
     const password = document.getElementById("passwordfield").value
 
-    const endpoint = "https://ftma4qavj6awolg4msi5i7qktm0cjhxk.lambda-url.eu-north-1.on.aws/login"
-
-    const response = await fetch(endpoint, {
+    const response = await fetch(`${BE_URL_2}/login`, {
         method: "POST",
         credentials: 'include',
         body: JSON.stringify({
