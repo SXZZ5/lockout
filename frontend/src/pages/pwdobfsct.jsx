@@ -74,8 +74,14 @@ export function PwdCharacter() {
     }
     return <div class={pwdchar}>
         <Show when={char() != null} fallback={null}>
-            <Show when={char() === '-'} fallback={char()}>
+            <Show when={char() === '-'}>
                 <img src={backspaceIcon} height={38} width={40}/>
+            </Show>
+            <Show when={char() !== '-'} fallback={null}>
+                {char()} 
+                <span style={{color: "rgb(204,204,204)"}}>
+                    {exmaples[char().toUpperCase()]}
+                </span>
             </Show>
             <br/>
         </Show>
@@ -115,3 +121,34 @@ async function request_add(pwd, fullseq) {
         alert("Could not store secret. Login and try again. This descriptor already exists")
     }
 }
+
+
+const exmaples = {
+    "A": "pple",
+    "B": "anana",
+    "C": "at",
+    "D": "og",
+    "E": "lephant",
+    "F": "ish",
+    "G": "iraffe",
+    "H": "at",
+    "I": "ce",
+    "J": "ungle",
+    "K": "ite",
+    "L": "ion",
+    "M": "ountain",
+    "N": "est",
+    "O": "cean",
+    "P": "encil",
+    "Q": "ueen",
+    "R": "iver",
+    "S": "un",
+    "T": "ree",
+    "U": "mbrella",
+    "V": "iolin",
+    "W": "hale",
+    "X": "ylophone",
+    "Y": "acht",
+    "Z": "ebra"
+  }
+  

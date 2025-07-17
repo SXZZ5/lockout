@@ -128,7 +128,7 @@ function request_update(description, action_clause) {
         })
     }).then((response) => {
         if (response.ok) {
-            alert(action_clause + "request successful");
+            alert(action_clause + " request successful");
             console.log(response.status);
         }
     })
