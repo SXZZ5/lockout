@@ -94,7 +94,7 @@ public class User {
         for(Info item: dbuser.getUserdata()){
             boolean toShow = false;
             toShow = AppUtils.hasTimeElapsedHours(item.getEpochTime(), item.getCooldownHours());
-            toShow = toShow && !AppUtils.hasTimeElapsedHours(item.getEpochTime(), item.getCooldownHours() + 1);
+            toShow = toShow && !AppUtils.hasTimeElapsedHours(item.getEpochTime(), item.getCooldownHours() + 3);
             if (!toShow) {
                 Instant minviewtime = Instant.ofEpochMilli(item.getEpochTime());
                 minviewtime = minviewtime.plusSeconds(item.getCooldownHours()*60*60);

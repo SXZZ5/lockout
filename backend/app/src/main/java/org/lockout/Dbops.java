@@ -44,11 +44,10 @@ public class Dbops {
      * Reference to the actual DynamoDBTable for the application.
      */
     static DynamoDbTable<Data> ddbt;
-    static LambdaLogger logger;
+    static LambdaLogger logger ;
 
     public static void InitDdbModel() {
         //just to assert that this function is not running on every API request or every database call.
-        logger.log("Running InitDbModel");
 
         ddbclient = DynamoDbClient.builder().region(Region.AP_SOUTH_1).build();
         ddbeclient = DynamoDbEnhancedClient.builder().dynamoDbClient(ddbclient).build();
