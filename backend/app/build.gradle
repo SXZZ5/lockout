@@ -25,7 +25,6 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk15on:1.70")
     implementation('com.fasterxml.jackson.core:jackson-databind:2.13.4.2')
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
-
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

@@ -45,7 +45,7 @@ function genBalSeq(fixedlen, maxallowedlen) {
         if (sum >= (fixedlen - rounds)) break;
         rounds++;
     }
-    console.log("genBalSeq: after while loop", str)
+    // console.log("genBalSeq: after while loop", str)
 
     for (let i = 1; i <= (fixedlen - rounds); ++i) {
         const val = random.boolean();
@@ -68,7 +68,7 @@ function genBalSeq(fixedlen, maxallowedlen) {
             str = newstr;
         }
     }
-    console.log("genBalSeq: after for loop: ", str);
+    // console.log("genBalSeq: after for loop: ", str);
 
     let validatesum = 0;
     let okay = true;
@@ -91,8 +91,8 @@ function genBalSeq(fixedlen, maxallowedlen) {
 
 function pwdObfuscated(digcount = Number(4)) {
     let pwd = generatePin(digcount).toString()
-    console.log("EXECUTING")
-    console.log(pwd);
+    // console.log("EXECUTING")
+    // console.log(pwd);
     let fullseq = "";
     let len = 0;
     for (let i = 1; i <= digcount - 1; ++i) {
@@ -120,6 +120,7 @@ function pwdObfuscated(digcount = Number(4)) {
 
     try {
         PinUnitTests(fullseq, pwd);
+        console.log(fullseq);
     } catch (err) {
         alert("DONT'T USE THE APP and THIS PWD. INFORM ADMIN IMMEDIATELY")
         console.log(fullseq);
@@ -139,7 +140,7 @@ function genUnique(old) {
 }
 
 function PinUnitTests(fullsequence, pwd, digcount = 4) {
-    console.log("digcount type", typeof(digcount))
+    // console.log("digcount type", typeof(digcount))
     let len = 0;
     let resultantstring = ""
     for (let i = 0; i < fullsequence.length; ++i) {
@@ -151,7 +152,7 @@ function PinUnitTests(fullsequence, pwd, digcount = 4) {
             len += 1;
             resultantstring += fullsequence[i]
         }
-        console.log(i, resultantstring, len)
+        // console.log(i, resultantstring, len)
         if (len < 0) {
             throw Error("Length became negative at some point")
         }

@@ -334,7 +334,7 @@ class Getinfo extends UserRequest {
  * Not much really, creates an instance of {@link User} somewhere and uses it to make basic calls.
  * Prepares, response object that will be used for setting {@link Router#response} that is finally returned to {@link Handler#handleRequest}
  */
-class Updates extends UserRequest {
+class Updates  extends UserRequest {
     public Updates(LambdaInput input) throws Exception {
         super(input);
     }
