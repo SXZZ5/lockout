@@ -18,7 +18,7 @@ function generatePwd(pwdlen = 30) {
 }
 
 function genBalSeq(fixedlen, maxallowedlen) {
-    console.log("genBalSeq: fixedlen: ", fixedlen, ", maxallowedlen: ", maxallowedlen);
+    // console.log("genBalSeq: fixedlen: ", fixedlen, ", maxallowedlen: ", maxallowedlen);
     console.assert(fixedlen % 2 == 0)
     let sum = 0, rounds = 1;
     let str = "";
@@ -120,7 +120,6 @@ function pwdObfuscated(digcount = Number(4)) {
 
     try {
         PinUnitTests(fullseq, pwd);
-        console.log(fullseq);
     } catch (err) {
         alert("DONT'T USE THE APP and THIS PWD. INFORM ADMIN IMMEDIATELY")
         console.log(fullseq);

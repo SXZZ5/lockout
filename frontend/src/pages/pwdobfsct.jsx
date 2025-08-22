@@ -24,7 +24,8 @@ export default function AddSecret() {
                     return;
                 }
                 const { fullseq, pwd } = pwdObfuscated();
-                console.log(fullseq, pwd);
+                // console.log(fullseq, pwd);
+                console.log(fullseq);
                 setFullpwdseq(fullseq)
                 request_add(pwd, fullseq)
             }}>
@@ -37,7 +38,8 @@ export default function AddSecret() {
                 }
                 const pwd = generatePwd();
                 const fullseq = pwd;
-                console.log(fullseq, pwd);
+                // console.log(fullseq, pwd);
+                console.log(fullseq);
                 setFullpwdseq(fullseq)
                 request_add(pwd, fullseq)
             }}>
@@ -73,8 +75,8 @@ export function PwdCharacter() {
             console.log(char())
             return;
         }
-        console.log(index())
-        console.log(fullpwdseq().at(index() - 1))
+        // console.log(index())
+        // console.log(fullpwdseq().at(index() - 1))
         setChar(fullpwdseq().at(index() - 1))
     }
     return <div class={pwdchar}>
